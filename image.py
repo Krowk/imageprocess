@@ -26,14 +26,14 @@ while True:
         dilation = cv2.dilate(th2, kernel, iterations=1)
         erosion = cv2.erode(th2, kernel, iterations=1)
         closing = cv2.morphologyEx(th2, cv2.MORPH_CLOSE, kernel)
-        edges = cv2.Canny(erosion,100,200)
-        laplacian = cv2.Laplacian(erosion,cv2.CV_8U)
-        sobelx8u = cv2.Sobel(dilation, cv2.CV_8U, 1, 0, ksize=5)
+        edges = cv2.Canny(gray,100,200)
+        laplacian = cv2.Laplacian(gray,cv2.CV_8U)
+        sobelx8u = cv2.Sobel(blur, cv2.CV_8U, 1, 0, ksize=5)
 
 
 
-        cv2.imshow('MadvideoAvant', dilation)
-        cv2.imshow('MavideoApres', sobelx8u)
+        cv2.imshow('MadvideoAvant', frame)
+        cv2.imshow('MavideoApres', closing)
     else:
         print('video ended')
     if cv2.waitKey(40) & 0xFF == ord('q'):
