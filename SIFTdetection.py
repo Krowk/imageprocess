@@ -1,30 +1,29 @@
-import cv2
 import numpy as np
+import cv2
+from matplotlib import pyplot as plt
 
-cap = cv2.VideoCapture('lancelot.mp4')
-ret, frame = cap.read()
-
-while(cap.isOpened()):
-    prev_frame=frame[:]
-    ret, frame = cap.read()
-    if ret:
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-
-        #detect key feature points
-        sift = cv2.xfeatures2d.SIFT_create()
-        kp, des = sift.detectAndCompute(gray, None)
-
-        #some magic with prev_frame
-
-        #draw key points detected
-        img=cv2.drawKeypoints(gray,kp,gray, flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
-
-        cv2.imshow("grayframe",img)
-    else:
-        print('Could not read frame')
-
-    if cv2.waitKey(100) & 0xFF == ord('q'):
-        break
-
-cap.release()
-cv2.destroyAllWindows()
+img1 = cv2.imread("oct_output_2_0.png")         # queryImage
+img2 = cv2.imread("oct_output_3_0.png") # trainImage
+# Initiate SIFT detector
+sift = cv2.xfeatures2d.SIFT_create()
+# find the keypoints and descriptors with SIFT
+kp1, des1 = sift.detectAndCompute(img1,None)
+kp2, des2 = sift.detectAndCompute(img2,None)
+# FLANN parameters
+FLANN_INDEX_KDTREE = 1
+index_params = dict(algorithm = FLANN_INDEX_KDTREE, trees = 5)
+search_params = dict(checks=50)   # or pass empty dictionary
+flann = cv2.FlannBasedMatcher(index_params,search_params)
+matches = flann.knnMatch(des1,des2,k=2)
+# Need to draw only good matches, so create a mask
+matchesMask = [[0,0] for i in range(len(matches))]
+# ratio test as per Lowe's paper
+for i,(m,n) in enumerate(matches):
+    if m.distance < 0.7*n.distance:
+        matchesMask[i]=[1,0]
+draw_params = dict(matchColor = (0,255,0),
+                   singlePointColor = (255,0,0),
+                   matchesMask = matchesMask,
+                   flags = 0)
+img3 = cv2.drawMatchesKnn(img1,kp1,img2,kp2,matches,None,**draw_params)
+plt.imshow(img3,),plt.show()
