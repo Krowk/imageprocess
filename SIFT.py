@@ -38,3 +38,5 @@ def representant(images: list):
     print("Distances compute complete")
     costs = distances.sum(axis=1)
     return costs.argmin(axis=0, fill_value=10e9)
+
+print(match_sift(img1,img2))
