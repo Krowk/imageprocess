@@ -9,7 +9,7 @@ img2 = cv2.imread("oct_output_3_0.png") # trainImage
 
 # Initiate SURF detector
 sift=cv2.xfeatures2d.SIFT_create()
-def match_sift(img1,img2):
+def match_sift(img1,img2,seuil):
 
     kp1, des1 = sift.detectAndCompute(img1,None)
     kp2, des2 = sift.detectAndCompute(img2,None)
@@ -21,7 +21,7 @@ def match_sift(img1,img2):
     # Apply ratio test
     good = []
     for m,n in matches:
-        if m.distance < 0.75*n.distance:
+        if m.distance < seuil*n.distance:
             good.append([m])
             a=len(good)
     return len(good)/float(len(kp2))
@@ -39,4 +39,4 @@ def representant(images: list):
     costs = distances.sum(axis=1)
     return costs.argmin(axis=0, fill_value=10e9)
 
-print(match_sift(img1,img2))
+print(match_sift(img1,img2,0.75))
