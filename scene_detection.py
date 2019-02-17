@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-
+import SIFT
 # Advanced Scene Detection Parameters
 INTENSITY_THRESHOLD = 16  # Pixel intensity threshold (0-255), default 16
 MINIMUM_PERCENT = 95  # Min. amount of pixels to be below threshold.
@@ -87,4 +87,7 @@ print(
         frame_count, total_runtime, avg_framerate))
 
 cap.release()
-
+listcorrplan = []
+for plan in l:
+    listcorrplan.append(SIFT.representant(plan))
+print(listcorrplan)
